@@ -10,7 +10,7 @@ Its React frontend talks to a FastAPI backend that runs the deepagents agent. Yo
 The demo is mainly a hands-on interface for the agent concepts in Module 5. It requires setup before it runs: backend dependencies and server, plus npm install for the frontend. The demo README has the setup steps; start_client.sh shows how the JupyterLab launcher handles setup that hasn’t been completed yet.
 
 -- newer intelligence constructs and paradigm review --
-"multi-agent collaboration"
+"multi-agent collaboration with state"
 deep_agent.py
 
 "reflection loop" 
@@ -36,8 +36,9 @@ if tool_results:
     memory.append(llm_response)
 key idea: the tool result is the observation; the next model call lets the model decide whether it can answer or needs another tool (reflection loop)
 
-"tool calling"
-docgen_agent.py, tools is the list of functions the agent is allowed to call. It’s passed into create_agent here:
+"tool calling aka tool pipeline"
+docgen_agent.py
+tools is the list of functions the agent is allowed to call. It’s passed into create_agent here:
 # Create the tool collection
 tools = [search_tavily]
 
@@ -50,3 +51,36 @@ agent = create_agent(
 
 "dynamic task routing"
 deep_agent.py
+dynamic task routing is not hard-coded 'if/else' but **model-driven delegation** router: the prompt tells the model when to delegate, and the haralabs agents library provides the `task` tool.
+
+The prompt (aka builtin) describes the routing behavior in `deep_agent.py`:
+
+```python
+builtin = [
+    "- Planning (write_todos): organize tasks",
+    "- Delegation (task): ask a subagent to handle a focused subtask with the same permissions",
+]
+```
+
+It also tells the model when to use a particular tool
+
+```text
+1. Answer simple questions directly. For independent subtasks, use task and check its result.
+```
+
+The `task` tool is included in the allowed tool names by `capabilities.py`:
+
+```python
+def enabled_tools(skill_ids):
+    names = {"write_todos", "task"}
+    ...
+    return names
+```
+Then `CapabilityMiddleware` limits which tools the model can see and call. The agent is wired with that middleware in `create_agent`.
+
+"runtime inference"
+server.py
+The runtime inference call is in : session.agent.astream_events(...). 
+That sends the user’s message into the agent, which calls the model( api call); the model may respond directly or request the task tool.
+
+The model is configured and the agent assembled in create_agent(), but the inference itself is handled inside the extended framework library
