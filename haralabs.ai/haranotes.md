@@ -13,7 +13,7 @@ The demo is mainly a hands-on interface for the agent concepts in Module 5. It r
 
 "anatomy of aGENtic systems "
 intro_to_agents.ipynb
-part # 1 model
+part # 1 langueage model
 part # 2 tools
 part # 3 memory
 part # 4 routing
@@ -126,3 +126,29 @@ langchain-nvidia-ai-endpoints>=1.4.3,<2
 langchain_mcp_adapters~=0.2.1
 langgraph-cli[inmem]
 langsmith~=0.3.0
+
+
+"guradrails"
+
+- `safety_common.py`  
+  Policy validation, secret-leak detection, injection detection, path checks, refusal detection, and pass/fail aggregation.
+
+- `agent_safety.py`  
+  Main safety exercise: sensitivity classification - pii classification, red-team probes, LLM judging, and the end-to-end suite.
+
+- `safety_eval_framework.py`  
+  Rubrics for policy adherence, data protection, and prompt-injection resistance.
+
+- `research_assistant.yaml`  
+  Hardened sandbox policy covering filesystem access, non-root execution, and network allowlists.
+
+- `baseline_permissive.yaml`  
+  Deliberately weak policy used to demonstrate guardrail failures.
+
+- `redteam_probes.json`  
+  Adversarial tests for exfiltration, prompt injection, traversal, social engineering, and benign requests.
+
+- `openclaw_wrapper.py`  
+  Deliberately unsafe mock agent used to verify that the guardrails detect violations.
+
+The learner versions intentionally contain TODOs; the completed implementations are in `agent_safety.answers.py` and `safety_eval_framework.answers.py`.
