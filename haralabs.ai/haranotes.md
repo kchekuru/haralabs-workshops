@@ -128,7 +128,7 @@ langgraph-cli[inmem]
 langsmith~=0.3.0
 
 
-"guradrails"
+"guradrails patterns"
 
 - `safety_common.py`  
   Policy validation, secret-leak detection, injection detection, path checks, refusal detection, and pass/fail aggregation.
